@@ -1,6 +1,5 @@
 import type { Pokemon } from "../interfaces/pokemon";
 
-// Comentário técnico: Função para extrair apenas os dados necessários, economizando espaço no LocalStorage
 const simplifyPokemon = (data: any): Pokemon => ({
     id: data.id,
     name: data.name,
@@ -16,6 +15,21 @@ const simplifyPokemon = (data: any): Pokemon => ({
     height: data.height
 });
 
+export const getPokemonsByGeneration = async (generationId: number): Promise<Pokemon[]> => {
+    const res = await fetch(`https://pokeapi.co/api/v2/generation/${generationId}`);
+    const data = await res.json();
+
+    const pokemons = await Promise.all(
+        data.pokemon_species.map(async (species: any) => {
+            const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${species.name}`);
+            const detail = await res.json();
+            return simplifyPokemon(detail);
+        })
+    );
+
+    return pokemons.sort((a, b) => a.id - b.id);
+};
+
 export const getPokemons = async (offset: number, limit: number = 20): Promise<Pokemon[]> => {
     const CACHE_KEY = 'pokedex_cache';
     const cachedData = localStorage.getItem(CACHE_KEY);
@@ -30,8 +44,6 @@ export const getPokemons = async (offset: number, limit: number = 20): Promise<P
 
             const res = await fetch(pokeRef.url);
             const detailData = await res.json();
-        
-            // Salvando apenas a versão simplificada no cache
             const simplified = simplifyPokemon(detailData);
             fullCache[pokeRef.name] = simplified;
             return simplified;
@@ -41,7 +53,6 @@ export const getPokemons = async (offset: number, limit: number = 20): Promise<P
     try {
         localStorage.setItem(CACHE_KEY, JSON.stringify(fullCache));
     } catch (e) {
-        // Se o cache lotar, limpamos para não travar a aplicação
         console.warn("Cache cheio, limpando para novo uso.");
         localStorage.removeItem(CACHE_KEY);
     }

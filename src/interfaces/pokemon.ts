@@ -4,16 +4,13 @@ export interface PokemonType {
     };
     }
 
-    /**
-     * Interface atualizada com weight e height
-     */
     export interface Pokemon {
     id: number;
     name: string;
     sprites: {
         other: {
         'official-artwork': {
-            front_default: string;
+            front_default: string;  
         };
         };
     };

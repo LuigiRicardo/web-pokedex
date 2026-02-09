@@ -1,28 +1,39 @@
 import React from 'react';
+import pokedexLogo from '../assets/pokedex-logo.png';
 
 interface HeaderProps {
     searchTerm: string;
     onSearchChange: (value: string) => void;
+    onOpenFilters: () => void;
+    filtersOpen: boolean;
 }
-// Comentário técnico: Componente de cabeçalho responsivo com barra de busca
-const Header: React.FC<HeaderProps> = ({ searchTerm, onSearchChange }) => {
+const Header: React.FC<HeaderProps> = ({
+    searchTerm,
+    onSearchChange,
+    onOpenFilters,
+    filtersOpen,
+}) => {
     return (
         <header className="fixed top-0 left-0 w-full bg-white shadow-md z-50 p-4">
-            {/* Container superior: Logo e Filtro */}
             <div className="flex items-center justify-between mb-4">
-                <div className="h-10 w-32 bg-gray-200 flex items-center justify-center">
-                <span className="text-xs text-gray-500 italic text-center px-1">Logo Retangular</span>
+                <div className="flex items-center justify-center">
+                    <img className="h-15 w-auto" src={pokedexLogo} alt="Pokedex Logo" />
                 </div>
 
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium">
+                <button
+                    onClick={onOpenFilters}
+                    aria-haspopup="dialog"
+                    aria-expanded={filtersOpen}
+                    aria-controls="filter-menu"
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-white"
+                    aria-label="Open filters"
+                >  
                     <span>Filters</span>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                     </svg>
                 </button>
             </div>
-
-            {/* Barra de Pesquisa: Fica abaixo devido ao fluxo do flex-col implicitamente */}
             <div className="relative">
                 <input 
                     type="text"

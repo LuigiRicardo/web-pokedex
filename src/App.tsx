@@ -3,23 +3,35 @@ import Header from './components/Header';
 import { usePokemons } from './hooks/usePokemons';
 import type { Pokemon} from './interfaces/pokemon';
 import PokemonModal from './components/PokemonModal';
+import FilterMenu from './components/FilterMenu';
+
+type SortOption = 'ID_ASC' | 'ID_DESC' | 'AZ' | 'ZA';
+type Generation =
+  | 'gen1' | 'gen2' | 'gen3'
+  | 'gen4' | 'gen5' | 'gen6'
+  | 'gen7' | 'gen8' | 'gen9';
 
 const App: React.FC = () => {
-  const [selectedPokemon, setSelectedPokemon] = React.useState<Pokemon | null>(null);
-  const { pokemons, loading, fetchNextPage } = usePokemons();
-  const observerTarget = useRef<HTMLDivElement>(null);
-  const [hasMore] = useState(true);
-  const [searchTerm, setSearchTerm] = React.useState("");
+  const [search, setSearch] = useState('');
+  const [types, setTypes] = useState<string[]>([]);
+  const [sort, setSort] = useState<SortOption>('ID_ASC');
+  const [selectedPokemon, setSelectedPokemon] = 
+    React.useState<Pokemon | null>(null);
+  const [generation, setGeneration] = useState<Generation>('gen1');
+  const { pokemons, loading, hasMore, fetchNextPage } =
+    usePokemons({
+      generation,
+      search,
+      types,
+      sort,
+    });
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const filteredPokemons = pokemons.filter(pokemon => 
-    pokemon.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    pokemon.id.toString().includes(searchTerm)
-  );
+  const observerTarget = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        // Agora usamos 'loading' e 'fetchNextPage', limpando os avisos do TS
         if (entries[0].isIntersecting && !loading) {
           fetchNextPage();
         }
@@ -39,20 +51,32 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header searchTerm={searchTerm} onSearchChange={setSearchTerm}/>
-
+      <Header
+        searchTerm={search}
+        onSearchChange={setSearch}
+        onOpenFilters={() => setFiltersOpen(true)}
+        filtersOpen={filtersOpen}
+      />
+      <FilterMenu
+        isOpen={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        generation={generation}
+        setGeneration={setGeneration}
+        types={types}
+        setTypes={setTypes}
+        sort={sort}
+        setSort={setSort}
+      />
       <main className="max-w-7xl mx-auto pt-44 px-4 pb-10">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredPokemons.map((pokemon) => (
-              <div 
+            {pokemons.map((pokemon) => (
+              <button 
                 key={pokemon.id}
-                onClick={() => setSelectedPokemon(pokemon)} // 2. Abre o modal ao clicar
-                className="bg-white p-4 rounded-xl shadow-sm cursor-pointer hover:scale-105 transition-transform"
+                onClick={() => setSelectedPokemon(pokemon)} 
+                className="bg-white p-4 rounded-xl shadow-sm text-left focus:outline-none focus:ring-2 focus:ring-blue-600 hover:scale-105 transition-transform"
+                aria-haspopup="dialog"
               >
-                {/* ID do Pokémon */}
                 <span className="text-gray-500 font-bold">#{pokemon.id}</span>
-                
-                {/* Imagem com tamanho fixo para garantir visibilidade */}
                 <img 
                   src={pokemon.sprites.other['official-artwork'].front_default} 
                   alt={pokemon.name}
@@ -60,13 +84,9 @@ const App: React.FC = () => {
                   onError={() => console.log(`Erro ao carregar imagem de ${pokemon.name}`)}
                   loading='lazy'
                 />
-                
-                {/* Nome com cor forte e capitalize */}
                 <h2 className="text-xl font-extrabold text-black capitalize">
                   {pokemon.name}
                 </h2>
-                
-                {/* Tipos */}
                 <div className="flex gap-2 mt-2">
                   {pokemon.types.map((t) => (
                     <span key={t.type.name} className="px-2 py-1 bg-blue-600 text-white text-xs rounded">
@@ -74,7 +94,7 @@ const App: React.FC = () => {
                     </span>
                   ))}
                 </div>
-              </div>
+              </button>
             ))}
           
         </div>
@@ -82,20 +102,20 @@ const App: React.FC = () => {
         {hasMore && (
         <div ref={observerTarget} className="h-20 flex items-center justify-center w-full">
           {loading && (
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" aria-hidden="true"></div>
           )}
         </div>
-      )}
+        )}
 
       {!hasMore && (
         <p className="text-center text-gray-400 py-10 font-medium">
-          Você chegou ao fim da 1ª Geração!
+          No more Pokémons
         </p>
       )}
       
-      {filteredPokemons.length === 0 && !loading && (
+      {pokemons.length === 0 && !loading && (
         <div className="text-center py-20 text-gray-500 font-medium">
-          No Pokémon found with "{searchTerm}"
+          No Pokémon found with "{search}"
         </div>
       )}
       </main>
