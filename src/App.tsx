@@ -4,6 +4,7 @@ import { usePokemons } from './hooks/usePokemons';
 import type { Pokemon} from './interfaces/pokemon';
 import PokemonModal from './components/PokemonModal';
 import FilterMenu from './components/FilterMenu';
+import { getShowdownSprite } from './utils/getShowdownSprite';
 
 type SortOption = 'ID_ASC' | 'ID_DESC' | 'AZ' | 'ZA';
 type Generation =
@@ -78,7 +79,7 @@ const App: React.FC = () => {
               >
                 <span className="text-gray-500 font-bold">#{pokemon.id}</span>
                 <img 
-                  src={pokemon.sprites.other['official-artwork'].front_default} 
+                  src={getShowdownSprite(pokemon.name)}
                   alt={pokemon.name}
                   className="w-32 h-32 object-contain block bg-gray-50 my-2"
                   onError={() => console.log(`Erro ao carregar imagem de ${pokemon.name}`)}

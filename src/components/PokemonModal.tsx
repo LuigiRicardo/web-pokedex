@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import React from 'react';
 import type { Pokemon } from '../interfaces/pokemon';
+import { getShowdownSprite } from '../utils/getShowdownSprite';
 
 interface ModalProps {
     pokemon: Pokemon | null;
@@ -43,7 +44,7 @@ const PokemonModal: React.FC<ModalProps> = ({ pokemon, onClose }) => {
                 </button>
                 <div className="bg-blue-500 p-8 flex flex-col items-center">
                     <img 
-                        src={pokemon.sprites.other['official-artwork'].front_default} 
+                        src={getShowdownSprite(pokemon.name)} 
                         alt={pokemon.name}
                         className="w-48 h-48 object-contain drop-shadow-xl"
                     />
