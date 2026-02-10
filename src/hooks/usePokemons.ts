@@ -83,6 +83,7 @@ export const usePokemons = ({
     useEffect(() => {
         setPokemons([]);
         setHasMore(true);
+        setLoadedCount(0);
     }, [generation, sort]);
 
     useEffect(() => {

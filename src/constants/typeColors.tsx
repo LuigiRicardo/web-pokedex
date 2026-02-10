@@ -1,0 +1,20 @@
+export const TYPE_COLORS: Record<string, string> = {
+    normal: "bg-[#705848] text-white",
+    water: "bg-[#6890f0] text-white",
+    fire: "bg-[#f05030] text-white",
+    grass: "bg-[#78c850] text-white",
+    electric: "bg-[#f8d030] text-white",
+    psychic: "bg-[#f85888] text-white",
+    ice: "bg-[#98d8d8] text-white",
+    dragon: "bg-[#7038f8] text-white",
+    dark: "bg-[#705848] text-white",
+    fighting: "bg-[#903028] text-white",
+    flying: "bg-[#a890f0] text-white",
+    poison: "bg-[#a040a0] text-white",
+    ground: "bg-[#e0c068] text-white",
+    rock: "bg-[#b8a038] text-white",
+    bug: "bg-[#a8b820] text-white",
+    ghost: "bg-[#705898] text-white",
+    steel: "bg-[#b8b8d0] text-white",
+    fairy: "bg-[#D685AD] text-white"
+}

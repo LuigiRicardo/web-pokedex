@@ -59,3 +59,20 @@ export const getPokemons = async (offset: number, limit: number = 20): Promise<P
 
     return pokemonDetails;
 };
+
+export const getPokemonByNameOrId = async (
+    query: string
+): Promise<Pokemon | null> => {
+    try {
+        const res = await fetch(
+            `https://pokeapi.co/api/v2/pokemon/${query.toLowerCase()}`
+        );
+
+        if (!res.ok) return null;
+
+        const data = await res.json();
+        return simplifyPokemon(data);
+    } catch {
+        return null;
+    }
+};

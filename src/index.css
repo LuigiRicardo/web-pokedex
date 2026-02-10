@@ -1,5 +1,26 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'PokemonXY';
+  src: url('./fonts/PokemonXandY.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-pokemon {
+  font-family: "PokemonXY", san-serif;
+}
+
+.text-outline-black {
+  text-shadow:
+      -1px -1px 0 #000,
+      1px -1px 0 #000,
+      -1px  1px 0 #000,
+      1px  1px 0 #000;
+}
+
+
 body {
   @apply bg-gray-50 text-gray-900;
 }

@@ -1,7 +1,10 @@
+import { normalizePokemonName } from './normalizePokemonName';
+
+const SHOWDOWN_BASE =
+    "https://play.pokemonshowdown.com/sprites/ani";
+
 export function getShowdownSprite(name: string) {
-    return `https://play.pokemonshowdown.com/sprites/ani/${name
-        .toLowerCase()
-        .replace('♀', 'f')
-        .replace('♂', 'm')
-    }.gif`;
+    const normalizedName = normalizePokemonName(name);
+    
+    return `${SHOWDOWN_BASE}/${normalizedName}.gif`;
 }

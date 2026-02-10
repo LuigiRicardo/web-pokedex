@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import React from 'react';
 import type { Pokemon } from '../interfaces/pokemon';
 import { getShowdownSprite } from '../utils/getShowdownSprite';
-
+import TypeBadge from "./TypeBadge/TypeBadge";
 interface ModalProps {
     pokemon: Pokemon | null;
     onClose: () => void;
@@ -42,7 +42,7 @@ const PokemonModal: React.FC<ModalProps> = ({ pokemon, onClose }) => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
-                <div className="bg-blue-500 p-8 flex flex-col items-center">
+                <div className="bg-pink-300 p-8 flex flex-col items-center">
                     <img 
                         src={getShowdownSprite(pokemon.name)} 
                         alt={pokemon.name}
@@ -65,9 +65,10 @@ const PokemonModal: React.FC<ModalProps> = ({ pokemon, onClose }) => {
                         <span className="text-gray-400 text-xs uppercase font-bold block mb-2 text-left px-2">Types</span>
                         <div className="flex gap-2 justify-start px-2">
                         {pokemon.types.map(t => (
-                            <span key={t.type.name} className="px-4 py-1 rounded-full bg-blue-600 text-white text-sm font-bold uppercase">
-                            {t.type.name}
-                            </span>
+                            <TypeBadge
+                                key={t.type.name}
+                                type={t.type.name}
+                            />
                         ))}
                         </div>
                     </div>
