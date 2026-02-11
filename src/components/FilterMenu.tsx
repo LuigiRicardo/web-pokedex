@@ -1,5 +1,6 @@
 import React from 'react';
 import { useEffect } from 'react';
+import TypeBadge from './TypeBadge';
 
 type SortOption = 'ID_ASC' | 'ID_DESC' | 'AZ' | 'ZA';
 
@@ -87,73 +88,124 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="filters-title"
-                className="absolute right-0 top-0 h-full w-full max-w-sm bg-white p-4 overflow-y-auto"
+                className="absolute right-0 top-0 h-full w-full max-w-sm
+                bg-white p-6 overflow-y-auto
+                shadow-2xl
+                border-l border-gray-200"
                 onClick={(e) => e.stopPropagation()}
             >
 
                 {/* Header */}
-                <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-black">Filters</h2>
+                <div className="flex items-center justify-between mb-6">
+                    <h2 id="filters-title" className="text-2xl font-extrabold tracking-tight">
+                        Filters
+                    </h2>
                     <button
                         onClick={onClose}
                         aria-label="Close filters"
-                        className="p-2 rounded-full bg-gray-100"
+                        className="w-9 h-9 flex items-center justify-center
+                            rounded-full bg-gray-100
+                            hover:bg-gray-200
+                            transition"
                     >
                         ✕
                     </button>
                 </div>
 
                 {/* Generation */}
-                <section className="mb-6">
-                    <h3 className="font-bold mb-2">Generation</h3>
-                    <div className="flex flex-col gap-2">
-                        {GENERATIONS.map(gen => (
-                                <label key={gen.key} className="flex items-center gap-2">
-                                    <input
-                                        type="radio"
-                                        name="generation"
-                                        checked={generation === gen.key}
-                                        onChange={() => setGeneration(gen.key)}
-                                    />
+                <section className="mb-8">
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-3">
+                        Generation
+                    </h3>
+
+                    <div className="grid grid-cols-2 gap-2">
+                        {GENERATIONS.map(gen => {
+                            const selected = generation === gen.key;
+
+                            return (
+                                <button
+                                    key={gen.key}
+                                    onClick={() => setGeneration(gen.key)}
+                                    className={`
+                                        py-2 px-3 rounded-lg text-sm font-semibold
+                                        transition
+                                        ${selected
+                                            ? "bg-black text-white"
+                                            : "bg-gray-100 hover:bg-gray-200"}
+                                    `}
+                                >
                                     {gen.label}
-                                </label>
-                        ))}
+                                </button>
+                            );
+                        })}
                     </div>
                 </section>
 
+
                 {/* Sort */}
-                <section className="mb-6">
-                    <h3 className="font-bold mb-2">Sort by</h3>
-                    <select
-                        value={sort}
-                        onChange={e => setSort(e.target.value as SortOption)}
-                        className="w-full border p-2 rounded"
-                    >
-                        <option value="ID_ASC">Number ↑</option>
-                        <option value="ID_DESC">Number ↓</option>
-                        <option value="AZ">A–Z</option>
-                        <option value="ZA">Z–A</option>
-                    </select>
+                <section className="mb-8">
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-3">
+                        Sort by
+                    </h3>
+
+                    <div className="grid grid-cols-2 gap-2">
+                        {[
+                            { value: "ID_ASC", label: "Number ↑" },
+                            { value: "ID_DESC", label: "Number ↓" },
+                            { value: "AZ", label: "A–Z" },
+                            { value: "ZA", label: "Z–A" },
+                        ].map(option => {
+                            const selected = sort === option.value;
+
+                            return (
+                                <button
+                                    key={option.value}
+                                    onClick={() => setSort(option.value as SortOption)}
+                                    className={`
+                                        py-2 px-3 rounded-lg text-sm font-semibold
+                                        transition
+                                        ${selected
+                                            ? "bg-black text-white"
+                                            : "bg-gray-100 hover:bg-gray-200"}
+                                    `}
+                                >
+                                    {option.label}
+                                </button>
+                            );
+                        })}
+                    </div>
                 </section>
+
 
                 {/* Types */}
                 <section>
-                    <h3 className="font-bold mb-2">Types</h3>
-                    <div className="flex flex-wrap gap-2">
-                        {ALL_TYPES.map(type => (
-                            <button
-                                key={type}
-                                onClick={() => toggleType(type)}
-                                aria-pressed={types.includes(type)}
-                                className={`px-3 py-1 rounded-full text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-600
-                                    ${types.includes(type)
-                                        ? 'bg-blue-600 text-white'
-                                        : 'bg-gray-200 text-gray-800'
-                                    }`}
-                            >
-                            {type}
-                            </button>
-                        ))}
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-3">
+                        Types
+                    </h3>
+
+                    <div className="flex flex-wrap gap-3">
+                        {ALL_TYPES.map(type => {
+                            const isSelected = types.includes(type);
+
+                            return (
+                                <button
+                                    key={type}
+                                    onClick={() => toggleType(type)}
+                                    className="focus:outline-none"
+                                    aria-pressed={isSelected}
+                                >
+                                    <TypeBadge
+                                        type={type}
+                                        className={`
+                                            transition-all duration-200
+                                            ${isSelected
+                                                ? "ring-2 ring-black scale-110"
+                                                : "opacity-70 hover:opacity-100"}
+                                        `}
+                                    />
+                                </button>
+                            );
+                        })}
                     </div>
                 </section>
             </aside>
