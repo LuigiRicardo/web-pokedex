@@ -14,7 +14,7 @@ const TypeBadge: React.FC<TypeBadgeProps> = ({ type, className = "" }) => {
         <span   
             className={`
                 inline-flex items-center justify-center
-                px-4 py-2 rounded
+                px-2 py-1 rounded
                 text-s uppercase
                 font-pokemon
                 text-outline-black
