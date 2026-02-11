@@ -6,6 +6,7 @@ import PokemonModal from './components/PokemonModal';
 import FilterMenu from './components/FilterMenu';
 import PokemonCard from './components/cards/PokemonCard';
 import { useGlobalSearch } from './hooks/useGlobalSearch';
+import { useDebounce } from "./hooks/useDebounce";
 
 type SortOption = 'ID_ASC' | 'ID_DESC' | 'AZ' | 'ZA';
 type Generation =
@@ -14,16 +15,29 @@ type Generation =
   | 'gen7' | 'gen8' | 'gen9';
 
 const App: React.FC = () => {
+  const handleSelectPokemon = React.useCallback((pokemon: Pokemon) => {
+    setSelectedPokemon(pokemon);
+  }, []);
+  const handleOpenFilters = React.useCallback(() => {
+    setFiltersOpen(true);
+  }, []);
+  const handleCloseFilters = React.useCallback(() => {
+    setFiltersOpen(false);
+  }, []);
   const [search, setSearch] = useState('');
+  const handleSearchChange = React.useCallback((value: string) => {
+    setSearch(value);
+  }, []);
+  const debouncedSearch = useDebounce(search, 400);
   const [types, setTypes] = useState<string[]>([]);
   const [sort, setSort] = useState<SortOption>('ID_ASC');
   const [selectedPokemon, setSelectedPokemon] = 
     React.useState<Pokemon | null>(null);
   const [generation, setGeneration] = useState<Generation>('gen1');
   const { results: searchedPokemon, loading: searching } =
-    useGlobalSearch(search);
+    useGlobalSearch(debouncedSearch);
   const isSearching =
-    search.trim().length > 0 &&
+    debouncedSearch.trim().length > 0 &&
     (searchedPokemon !== null || searching);
   const { pokemons, loading, hasMore, fetchNextPage,} =
     usePokemons({
@@ -48,7 +62,7 @@ const App: React.FC = () => {
       },
       { 
         threshold: 0.1,
-        rootMargin: '100px'
+        rootMargin: '300px'
       }
     );
 
@@ -63,13 +77,13 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <Header
         searchTerm={search}
-        onSearchChange={setSearch}
-        onOpenFilters={() => setFiltersOpen(true)}
+        onSearchChange={handleSearchChange}
+        onOpenFilters={handleOpenFilters}
         filtersOpen={filtersOpen}
       />
       <FilterMenu
         isOpen={filtersOpen}
-        onClose={() => setFiltersOpen(false)}
+        onClose={handleCloseFilters}
         generation={generation}
         setGeneration={setGeneration}
         types={types}
@@ -83,7 +97,7 @@ const App: React.FC = () => {
               <PokemonCard
                 key={pokemon.id}
                 pokemon={pokemon}
-                onSelect={setSelectedPokemon}
+                onSelect={handleSelectPokemon}
               />
             ))}
           

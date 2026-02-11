@@ -1,6 +1,7 @@
 import type { Pokemon } from '../../interfaces/pokemon';
 import { getShowdownSprite } from '../../utils/getShowdownSprite';
 import TypeBadge from "../TypeBadge/TypeBadge";
+import React from "react";
 
 interface PokemonCardProps {
     pokemon: Pokemon;
@@ -21,6 +22,7 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onSelect }) => {
                 alt={pokemon.name}
                 className="w-32 h-32 object-contain block bg-gray-50 my-2"
                 loading="lazy"
+                decoding="async"
             />
 
             <h2 className="text-xl font-extrabold capitalize">
@@ -39,4 +41,4 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onSelect }) => {
     );
 };
 
-export default PokemonCard;
+export default React.memo(PokemonCard);
