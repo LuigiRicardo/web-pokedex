@@ -1,57 +1,59 @@
-// hooks/useGlobalSearch.ts
 import { useEffect, useState } from "react";
 import type { Pokemon } from "../interfaces/pokemon";
+import { getPokemonIndex } from "../services/pokemonIndex";
+import { getPokemonByNameOrId } from "../services/api";
 
 export const useGlobalSearch = (search: string) => {
-    const [pokemon, setPokemon] = useState<Pokemon | null>(null);
+    const [results, setResults] = useState<Pokemon[]>([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const term = search.trim().toLowerCase();
 
         if (!term) {
-            setPokemon(null);
+            setResults([]);
             return;
         }
 
         const controller = new AbortController();
 
-        const fetchPokemon = async () => {
+        const fetchResults = async () => {
             setLoading(true);
+
             try {
-                const res = await fetch(
-                    `https://pokeapi.co/api/v2/pokemon/${term}`,
-                    { signal: controller.signal }
+                // 1️⃣ pega índice completo
+                const index = await getPokemonIndex();
+
+                // 2️⃣ filtra localmente (PARCIAL!)
+                const matches = index.filter(p =>
+                    p.name.includes(term) ||
+                    p.id.toString().includes(term)
+                ).slice(0, 20); // limita para evitar spam de requests
+
+                // 3️⃣ busca detalhes reais
+                const detailed = await Promise.all(
+                    matches.map(p =>
+                        getPokemonByNameOrId(p.name)
+                    )
                 );
 
-                if (!res.ok) {
-                    setPokemon(null);
-                    return;
-                }
-
-                const data = await res.json();
-
-                setPokemon({
-                    id: data.id,
-                    name: data.name,
-                    sprites: data.sprites,
-                    types: data.types,
-                    weight: data.weight,
-                    height: data.height,
-                });
+                setResults(
+                    detailed.filter(Boolean) as Pokemon[]
+                );
             } catch (err) {
                 if (!(err instanceof DOMException)) {
                     console.error(err);
                 }
-                setPokemon(null);
+                setResults([]);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchPokemon();
+        fetchResults();
+
         return () => controller.abort();
     }, [search]);
 
-    return { pokemon, loading };
+    return { results, loading };
 };

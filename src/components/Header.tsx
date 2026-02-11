@@ -17,7 +17,7 @@ const Header: React.FC<HeaderProps> = ({
         <header className="fixed top-0 left-0 w-full bg-white shadow-md z-50 p-4">
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center justify-center">
-                    <img className="h-15 w-auto" src={pokedexLogo} alt="Pokedex Logo" />
+                    <img fetchPriority='high' className="h-15 w-auto" src={pokedexLogo} alt="Pokedex Logo" />
                 </div>
 
                 <button

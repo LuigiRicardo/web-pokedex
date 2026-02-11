@@ -20,7 +20,7 @@ const App: React.FC = () => {
   const [selectedPokemon, setSelectedPokemon] = 
     React.useState<Pokemon | null>(null);
   const [generation, setGeneration] = useState<Generation>('gen1');
-  const { pokemon: searchedPokemon, loading: searching } =
+  const { results: searchedPokemon, loading: searching } =
     useGlobalSearch(search);
   const isSearching =
     search.trim().length > 0 &&
@@ -34,8 +34,6 @@ const App: React.FC = () => {
     });
   const pokemonsToRender = isSearching 
     ? searchedPokemon
-      ? [searchedPokemon]
-      : []
     : pokemons; 
   const [filtersOpen, setFiltersOpen] = useState(false);
 
