@@ -63,7 +63,7 @@ const Header: React.FC<HeaderProps> = ({
           aria-haspopup="dialog"
           aria-expanded={filtersOpen}
           aria-controls="filter-menu"
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-white"
+          className="bg-black text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-white"
           aria-label="Open filters"
         >
           <span>Filters</span>

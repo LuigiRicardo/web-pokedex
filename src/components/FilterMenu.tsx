@@ -199,9 +199,7 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
           </button>
         </div>
 
-        {/* ===================== */}
         {/* Generation Selection */}
-        {/* ===================== */}
         <section className="mb-8">
           <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-3">
             Generation
@@ -232,9 +230,7 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
           </div>
         </section>
 
-        {/* ============= */}
         {/* Sort Section */}
-        {/* ============= */}
         <section className="mb-8">
           <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-3">
             Sort by
@@ -254,14 +250,14 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
                   key={option.value}
                   onClick={() => setSort(option.value as SortOption)}
                   className={`
-                                        py-2 px-3 rounded-lg text-sm font-semibold
-                                        transition
-                                        ${
-                                          selected
-                                            ? 'bg-black text-white'
-                                            : 'bg-gray-100 hover:bg-gray-200'
-                                        }
-                                    `}
+                    py-2 px-3 rounded-lg text-sm font-semibold
+                    transition
+                    ${
+                      selected
+                        ? 'bg-black text-white'
+                        : 'bg-gray-100 hover:bg-gray-200'
+                    }
+                  `}
                 >
                   {option.label}
                 </button>
@@ -270,9 +266,7 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
           </div>
         </section>
 
-        {/* ============= */}
         {/* Types Section */}
-        {/* ============= */}
         <section>
           <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-3">
             Types
