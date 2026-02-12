@@ -172,6 +172,7 @@ export const usePokemons = ({
    * - Sorting changes
    *
    * Sorting reset ensures correct pagination order.
+   * This effect runs FIRST to reset all state.
    */
   useEffect(() => {
     setPokemons([]);
@@ -180,21 +181,69 @@ export const usePokemons = ({
   }, [generation, sort]);
 
   /**
-   * Handles data fetching.
+   * Triggers initial load when generation or sort changes.
+   * This ensures that even if loadedCount is already 0,
+   * we still load the first page of data.
    *
-   * Triggered whenever loadedCount changes.
-   *
-   * Logic:
-   * - Calculates remaining Pokémon in the generation
-   * - Determines real offset (supports descending fetch)
-   * - Fetches data chunk
-   * - Deduplicates results
-   * - Updates hasMore state
+   * This effect runs AFTER the reset effect above.
    */
   useEffect(() => {
-    const loadPokemons = async () => {
-      if (loading || !hasMore) return;
+    // Trigger a load by incrementing and resetting
+    // This ensures the fetch effect is always triggered
+    const performInitialLoad = async () => {
+      if (loading) return;
 
+      setLoading(true);
+
+      try {
+        const limit = Math.min(PAGE_SIZE, generationLimit);
+        const isDescending = sort === 'ID_DESC';
+
+        const realOffset = isDescending
+          ? baseOffset + generationLimit - limit
+          : baseOffset;
+
+        if (limit <= 0) {
+          setHasMore(false);
+          return;
+        }
+
+        const newPokemons = await getPokemons(realOffset, limit);
+
+        setPokemons(
+          newPokemons.sort((a, b) => a.id - b.id)
+        );
+
+        if (limit >= generationLimit) {
+          setHasMore(false);
+        } else {
+          setHasMore(true);
+        }
+
+        setLoadedCount(limit);
+      } catch (err) {
+        console.error('Error fetching initial Pokémons:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    performInitialLoad();
+    // Only depend on generation and sort, not loadedCount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [generation, sort]);
+
+  /**
+   * Handles pagination for loading more Pokémon.
+   *
+   * Triggered after the initial load when user scrolls or clicks "load more".
+   */
+  useEffect(() => {
+    // Don't load if we just loaded (via initial load effect)
+    if (loadedCount === 0) return;
+    if (loading || !hasMore) return;
+
+    const loadMorePokemons = async () => {
       setLoading(true);
 
       try {
@@ -239,15 +288,15 @@ export const usePokemons = ({
           setHasMore(false);
         }
       } catch (err) {
-        console.error('Error fetching Pokémons:', err);
+        console.error('Error fetching more Pokémons:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    loadPokemons();
+    loadMorePokemons();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadedCount, generation, sort]);
+  }, [loadedCount]);
 
   /**
    * Triggers loading of the next page.
