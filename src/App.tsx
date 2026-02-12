@@ -78,21 +78,18 @@ const App: React.FC = () => {
 
   /**
    * Opens filter side menu.
-   */
+   * Close filter side menu.
+  */
   const handleOpenFilters = React.useCallback(() => {
     setFiltersOpen(true);
   }, []);
-
-  /**
-   * Closes filter side menu.
-   */
   const handleCloseFilters = React.useCallback(() => {
     setFiltersOpen(false);
   }, []);
 
   /**
    * Updates search input value.
-   */
+  */
   const handleSearchChange = React.useCallback((value: string) => {
     setSearch(value);
   }, []);
@@ -102,7 +99,7 @@ const App: React.FC = () => {
    *
    * This hook performs a direct Pokémon lookup when the user
    * types a specific name or ID.
-   */
+  */
   const { results: searchedPokemon, loading: searching } =
     useGlobalSearch(debouncedSearch);
 
@@ -111,7 +108,7 @@ const App: React.FC = () => {
    * operating in "global search mode".
    *
    * Global search overrides paginated generation fetching.
-   */
+  */
   const isSearching =
     debouncedSearch.trim().length > 0 &&
     (searchedPokemon !== null || searching);
@@ -124,7 +121,7 @@ const App: React.FC = () => {
    * - Applies type filtering
    * - Applies sorting
    * - Ignores search filtering when global search is active
-   */
+  */
   const { pokemons, loading, hasMore, fetchNextPage } =
     usePokemons({
       generation,
@@ -140,7 +137,7 @@ const App: React.FC = () => {
     * Global search is separated from paginated fetching
     * to optimize performance and allow direct Pokémon lookup
     * without interfering with infinite scroll behavior.
-   */
+  */
   const pokemonsToRender = isSearching
     ? searchedPokemon
     : pokemons;
@@ -148,7 +145,7 @@ const App: React.FC = () => {
   /**
    * Reference element used as a trigger for infinite scrolling.
    * When visible, it triggers the next page fetch.
-   */
+  */
   const observerTarget = useRef<HTMLDivElement>(null);
 
   /**
@@ -159,7 +156,7 @@ const App: React.FC = () => {
    * it fetches the next page of Pokémon.
    *
    * rootMargin increases preloading distance for smoother UX.
-   */
+  */
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
