@@ -50,7 +50,7 @@ npm run deploy     # Deploy no GitHub Pages
 
 ### Estrutura de Pastas
 
-´´´
+```bash
 src/
  components/          # Componentes React
     common/         # Componentes reutilizáveis (Header, Modal)
@@ -66,7 +66,7 @@ src/
  config/             # Configurações globais
  utils/              # Funções utilitárias
  styles/             # Estilos globais (CSS)
-´´´
+```
 
 ### Padrões de Arquitetura
 
