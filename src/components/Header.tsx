@@ -1,12 +1,34 @@
 import React from 'react';
 import pokedexLogo from '../assets/pokedex-logo.png';
 
+/**
+ * Props for the Header component.
+ *
+ * @property searchTerm      - Current value of the search input.
+ * @property onSearchChange  - Callback triggered when the user types in the search field.
+ * @property onOpenFilters   - Callback triggered when the filter button is clicked.
+ * @property filtersOpen     - Boolean indicating whether the filter dialog is currently open.
+ */
 interface HeaderProps {
     searchTerm: string;
     onSearchChange: (value: string) => void;
     onOpenFilters: () => void;
     filtersOpen: boolean;
 }
+
+/**
+ * Header Component
+ *
+ * Responsibilities:
+ * - Display the application logo
+ * - Provide a global search input
+ * - Provide a button to toggle the filters dialog
+ * - Maintain accessibility semantics for dialog control
+ *
+ * This component is fully controlled:
+ * - It does not manage its own state.
+ * - All interactions are delegated to parent components via callbacks.
+ */
 const Header: React.FC<HeaderProps> = ({
     searchTerm,
     onSearchChange,
@@ -14,27 +36,67 @@ const Header: React.FC<HeaderProps> = ({
     filtersOpen,
 }) => {
     return (
+        /**
+         * Fixed header container
+         *
+         * - Positioned at the top of the viewport
+         * - Full width
+         * - Elevated with shadow
+         * - High z-index to remain above content
+         */
         <header className="fixed top-0 left-0 w-full bg-white shadow-md z-50 p-4">
+            
+            {/* Top row: Logo + Filters button */}
             <div className="flex items-center justify-between mb-4">
+                
+                {/* Logo section */}
                 <div className="flex items-center justify-center">
-                    <img fetchPriority='high' className="h-15 w-auto" src={pokedexLogo} alt="Pokedex Logo" />
+                    <img
+                        fetchPriority='high'
+                        className="h-15 w-auto"
+                        src={pokedexLogo}
+                        alt="Pokedex Logo"
+                    />
                 </div>
 
+                {/* Filters toggle button */}
                 <button
                     onClick={onOpenFilters}
                     aria-haspopup="dialog"
                     aria-expanded={filtersOpen}
                     aria-controls="filter-menu"
+
                     className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-white"
+
                     aria-label="Open filters"
-                >  
+                >
                     <span>Filters</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+
+                    {/* Decorative filter icon (SVG inline for performance and styling control) */}
+                    <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                        />
                     </svg>
                 </button>
             </div>
+
+            {/* Search input section */}
             <div className="relative">
+                
+                {/*
+                    Controlled input:
+                    - value is managed by parent state
+                    - onChange propagates updates upward
+                */}
                 <input 
                     type="text"
                     value={searchTerm}
@@ -42,8 +104,20 @@ const Header: React.FC<HeaderProps> = ({
                     placeholder="Search Pokémon..." 
                     className="w-full p-2 pl-10 border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 outline-none"
                 />
-                <svg className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+
+                {/* Search icon positioned inside the input field */}
+                <svg
+                    className="w-5 h-5 absolute left-3 top-2.5 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
                 </svg>
             </div>
         </header>

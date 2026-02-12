@@ -1,3 +1,4 @@
+/**Normalizing the pokemon names for showdown sprites */
 export function normalizePokemonName(name: string): string {
     return name
         .toLowerCase()

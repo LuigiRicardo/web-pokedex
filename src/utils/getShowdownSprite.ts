@@ -1,3 +1,5 @@
+/**Call external animated sprites */
+
 import { normalizePokemonName } from './normalizePokemonName';
 
 const SHOWDOWN_BASE =
