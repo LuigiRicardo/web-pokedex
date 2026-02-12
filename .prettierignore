@@ -1,0 +1,9 @@
+dist
+node_modules
+build
+coverage
+.git
+.github
+public
+*.min.js
+*.min.css

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 /**
  * useDebounce Hook
@@ -17,34 +17,34 @@ import { useEffect, useState } from "react";
  * @returns The debounced value
  */
 export const useDebounce = <T>(value: T, delay: number): T => {
-    // Stores the debounced value separately from the original value
-    const [debouncedValue, setDebouncedValue] = useState(value);
+  // Stores the debounced value separately from the original value
+  const [debouncedValue, setDebouncedValue] = useState(value);
 
-    useEffect(() => {
-        /**
-         * Creates a timer that updates the debounced value
-         * only after the specified delay.
-         *
-         * If the `value` changes before the delay finishes,
-         * the previous timer will be cleared and restarted.
-         */
-        const timer = setTimeout(() => {
-            setDebouncedValue(value);
-        }, delay);
+  useEffect(() => {
+    /**
+     * Creates a timer that updates the debounced value
+     * only after the specified delay.
+     *
+     * If the `value` changes before the delay finishes,
+     * the previous timer will be cleared and restarted.
+     */
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
 
-        /**
-         * Cleanup function:
-         * Clears the previous timeout whenever:
-         * - The value changes
-         * - The delay changes
-         * - The component unmounts
-         *
-         * This prevents memory leaks and ensures
-         * only the latest value update is applied.
-         */
-        return () => clearTimeout(timer);
-    }, [value, delay]);
+    /**
+     * Cleanup function:
+     * Clears the previous timeout whenever:
+     * - The value changes
+     * - The delay changes
+     * - The component unmounts
+     *
+     * This prevents memory leaks and ensures
+     * only the latest value update is applied.
+     */
+    return () => clearTimeout(timer);
+  }, [value, delay]);
 
-    // Returns the stabilized (debounced) value
-    return debouncedValue;
+  // Returns the stabilized (debounced) value
+  return debouncedValue;
 };

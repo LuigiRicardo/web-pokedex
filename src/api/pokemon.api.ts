@@ -6,25 +6,21 @@
  */
 
 export const fetchPokemonByQuery = async (query: string) => {
-    const response = await fetch(
-        `https://pokeapi.co/api/v2/pokemon/${query}`
-    );
+  const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${query}`);
 
-    if (!response.ok) {
-        throw new Error("Pokemon not found");
-    }
+  if (!response.ok) {
+    throw new Error('Pokemon not found');
+  }
 
-    return response.json();
+  return response.json();
 };
 
 export const fetchPokemonIndex = async () => {
-    const response = await fetch(
-        "https://pokeapi.co/api/v2/pokemon?limit=2000"
-    );
+  const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=2000');
 
-    if (!response.ok) {
-        throw new Error("Failed to fetch Pokemon index");
-    }
+  if (!response.ok) {
+    throw new Error('Failed to fetch Pokemon index');
+  }
 
-    return response.json();
+  return response.json();
 };

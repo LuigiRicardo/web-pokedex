@@ -16,6 +16,22 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Path aliases for cleaner imports */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@services/*": ["src/services/*"],
+      "@api/*": ["src/api/*"],
+      "@interfaces/*": ["src/interfaces/*"],
+      "@mappers/*": ["src/mappers/*"],
+      "@utils/*": ["src/utils/*"],
+      "@types/*": ["src/types/*"],
+      "@constants/*": ["src/constants/*"],
+      "@config/*": ["src/config/*"]
+    },
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,

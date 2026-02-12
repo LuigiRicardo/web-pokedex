@@ -24,18 +24,18 @@ import PokemonModal from './components/PokemonModal';
 import FilterMenu from './components/FilterMenu';
 import PokemonCard from './components/cards/PokemonCard';
 import { useGlobalSearch } from './hooks/useGlobalSearch';
-import { useDebounce } from "./hooks/useDebounce";
+import { useDebounce } from './hooks/useDebounce';
 import type { SortOption } from './hooks/usePokemons';
 import type { Generation } from './hooks/usePokemons';
 
 const App: React.FC = () => {
-
   /**
    * Stores the currently selected Pokémon for modal visualization.
    * Null means no modal is open.
    */
-  const [selectedPokemon, setSelectedPokemon] =
-    React.useState<Pokemon | null>(null);
+  const [selectedPokemon, setSelectedPokemon] = React.useState<Pokemon | null>(
+    null
+  );
 
   /**
    * Controls the visibility of the filter side menu.
@@ -79,7 +79,7 @@ const App: React.FC = () => {
   /**
    * Opens filter side menu.
    * Close filter side menu.
-  */
+   */
   const handleOpenFilters = React.useCallback(() => {
     setFiltersOpen(true);
   }, []);
@@ -89,7 +89,7 @@ const App: React.FC = () => {
 
   /**
    * Updates search input value.
-  */
+   */
   const handleSearchChange = React.useCallback((value: string) => {
     setSearch(value);
   }, []);
@@ -99,7 +99,7 @@ const App: React.FC = () => {
    *
    * This hook performs a direct Pokémon lookup when the user
    * types a specific name or ID.
-  */
+   */
   const { results: searchedPokemon, loading: searching } =
     useGlobalSearch(debouncedSearch);
 
@@ -108,7 +108,7 @@ const App: React.FC = () => {
    * operating in "global search mode".
    *
    * Global search overrides paginated generation fetching.
-  */
+   */
   const isSearching =
     debouncedSearch.trim().length > 0 &&
     (searchedPokemon !== null || searching);
@@ -121,31 +121,28 @@ const App: React.FC = () => {
    * - Applies type filtering
    * - Applies sorting
    * - Ignores search filtering when global search is active
-  */
-  const { pokemons, loading, hasMore, fetchNextPage } =
-    usePokemons({
-      generation,
-      search: isSearching ? "" : search,
-      types,
-      sort,
-    });
+   */
+  const { pokemons, loading, hasMore, fetchNextPage } = usePokemons({
+    generation,
+    search: isSearching ? '' : search,
+    types,
+    sort,
+  });
 
   /**
    * Determines which Pokémon list should be rendered:
    * - Global search results (if searching)
    * - Paginated generation results (default)
-    * Global search is separated from paginated fetching
-    * to optimize performance and allow direct Pokémon lookup
-    * without interfering with infinite scroll behavior.
-  */
-  const pokemonsToRender = isSearching
-    ? searchedPokemon
-    : pokemons;
+   * Global search is separated from paginated fetching
+   * to optimize performance and allow direct Pokémon lookup
+   * without interfering with infinite scroll behavior.
+   */
+  const pokemonsToRender = isSearching ? searchedPokemon : pokemons;
 
   /**
    * Reference element used as a trigger for infinite scrolling.
    * When visible, it triggers the next page fetch.
-  */
+   */
   const observerTarget = useRef<HTMLDivElement>(null);
 
   /**
@@ -156,7 +153,7 @@ const App: React.FC = () => {
    * it fetches the next page of Pokémon.
    *
    * rootMargin increases preloading distance for smoother UX.
-  */
+   */
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -166,7 +163,7 @@ const App: React.FC = () => {
       },
       {
         threshold: 0.1,
-        rootMargin: '300px'
+        rootMargin: '300px',
       }
     );
 
@@ -179,7 +176,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-
       {/* Top navigation header (search + filter toggle) */}
       <Header
         searchTerm={search}
@@ -201,10 +197,9 @@ const App: React.FC = () => {
       />
 
       <main className="max-w-7xl mx-auto pt-44 px-4 pb-10">
-
         {/* Pokémon grid layout */}
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {pokemonsToRender.map(pokemon => (
+          {pokemonsToRender.map((pokemon) => (
             <PokemonCard
               key={pokemon.id}
               pokemon={pokemon}

@@ -1,1 +1,1 @@
-export { default } from "./TypeBadge";
+export { default } from './TypeBadge';

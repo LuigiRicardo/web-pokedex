@@ -1,7 +1,7 @@
 import type { Pokemon } from '../../interfaces/pokemon';
 import { getShowdownSprite } from '../../utils/getShowdownSprite';
-import TypeBadge from "../TypeBadge/TypeBadge";
-import React from "react";
+import TypeBadge from '../TypeBadge/TypeBadge';
+import React from 'react';
 
 /**
  * Props for the PokemonCard component.
@@ -11,8 +11,8 @@ import React from "react";
  *                      Typically used to open the details modal.
  */
 interface PokemonCardProps {
-    pokemon: Pokemon;
-    onSelect: (pokemon: Pokemon) => void;
+  pokemon: Pokemon;
+  onSelect: (pokemon: Pokemon) => void;
 }
 
 /**
@@ -34,53 +34,46 @@ interface PokemonCardProps {
  * - Memoized to prevent unnecessary re-renders
  */
 const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onSelect }) => {
-    return (
-        /**
-         * Entire card is a button to ensure:
-         * - Keyboard accessibility
-         * - Proper semantic interaction
-         * - Screen reader clarity
-         */
-        <button
-            onClick={() => onSelect(pokemon)}
-            className="
+  return (
+    /**
+     * Entire card is a button to ensure:
+     * - Keyboard accessibility
+     * - Proper semantic interaction
+     * - Screen reader clarity
+     */
+    <button
+      onClick={() => onSelect(pokemon)}
+      className="
                 bg-white p-4 rounded-xl shadow-sm
                 text-left cursor-pointer
                 hover:scale-105 transition-transform
                 focus:outline-none focus:ring-2 focus:ring-blue-500
             "
-            aria-label={`Open details for ${pokemon.name}`}
-        >
-            {/* Pokémon ID */}
-            <span className="text-gray-500 font-bold">
-                #{pokemon.id}
-            </span>
+      aria-label={`Open details for ${pokemon.name}`}
+    >
+      {/* Pokémon ID */}
+      <span className="text-gray-500 font-bold">#{pokemon.id}</span>
 
-            {/* Pokémon sprite */}
-            <img
-                src={getShowdownSprite(pokemon.name)}
-                alt={pokemon.name}
-                className="w-32 h-32 object-contain block bg-gray-50 my-2"
-                loading="lazy"
-                decoding="async"
-            />
+      {/* Pokémon sprite */}
+      <img
+        src={getShowdownSprite(pokemon.name)}
+        alt={pokemon.name}
+        className="w-32 h-32 object-contain block bg-gray-50 my-2"
+        loading="lazy"
+        decoding="async"
+      />
 
-            {/* Pokémon name */}
-            <h2 className="text-xl font-extrabold capitalize">
-                {pokemon.name}
-            </h2>
+      {/* Pokémon name */}
+      <h2 className="text-xl font-extrabold capitalize">{pokemon.name}</h2>
 
-            {/* Pokémon types */}
-            <div className="flex gap-2 mt-2">
-                {pokemon.types.map(t => (
-                    <TypeBadge
-                        key={t.type.name}
-                        type={t.type.name}
-                    />
-                ))}
-            </div>
-        </button>
-    );
+      {/* Pokémon types */}
+      <div className="flex gap-2 mt-2">
+        {pokemon.types.map((t) => (
+          <TypeBadge key={t.type.name} type={t.type.name} />
+        ))}
+      </div>
+    </button>
+  );
 };
 
 /**

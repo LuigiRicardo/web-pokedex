@@ -15,7 +15,22 @@
  * - Basic caching strategy is implemented to reduce network requests
  */
 
-import type { Pokemon } from "../interfaces/pokemon";
+import type { Pokemon } from '../interfaces/pokemon';
+
+interface GenerationResponse {
+  pokemon_species: Array<{
+    name: string;
+    url: string;
+  }>;
+}
+
+interface RawPokemonDetail {
+  id: number;
+  name: string;
+  types: unknown;
+  weight: number;
+  height: number;
+}
 
 /**
  * Normalizes raw PokeAPI Pokémon response
@@ -26,12 +41,12 @@ import type { Pokemon } from "../interfaces/pokemon";
  * - Improve consistency
  * - Decouple UI from full API response structure
  */
-const simplifyPokemon = (data: any): Pokemon => ({
-    id: data.id,
-    name: data.name,
-    types: data.types,
-    weight: data.weight,
-    height: data.height
+const simplifyPokemon = (data: RawPokemonDetail): Pokemon => ({
+  id: data.id,
+  name: data.name,
+  types: data.types as unknown as Pokemon['types'],
+  weight: data.weight,
+  height: data.height,
 });
 
 /**
@@ -48,26 +63,25 @@ const simplifyPokemon = (data: any): Pokemon => ({
  * may be heavy depending on generation size.
  */
 export const getPokemonsByGeneration = async (
-    generationId: number
+  generationId: number
 ): Promise<Pokemon[]> => {
+  const res = await fetch(
+    `https://pokeapi.co/api/v2/generation/${generationId}`
+  );
+  const data: GenerationResponse = await res.json();
 
-    const res = await fetch(
-        `https://pokeapi.co/api/v2/generation/${generationId}`
-    );
-    const data = await res.json();
+  const pokemons = await Promise.all(
+    data.pokemon_species.map(async (species) => {
+      const res = await fetch(
+        `https://pokeapi.co/api/v2/pokemon/${species.name}`
+      );
+      const detail: RawPokemonDetail = await res.json();
+      return simplifyPokemon(detail);
+    })
+  );
 
-    const pokemons = await Promise.all(
-        data.pokemon_species.map(async (species: any) => {
-            const res = await fetch(
-                `https://pokeapi.co/api/v2/pokemon/${species.name}`
-            );
-            const detail = await res.json();
-            return simplifyPokemon(detail);
-        })
-    );
-
-    // Ensures deterministic ordering
-    return pokemons.sort((a, b) => a.id - b.id);
+  // Ensures deterministic ordering
+  return pokemons.sort((a, b) => a.id - b.id);
 };
 
 /**
@@ -85,61 +99,59 @@ export const getPokemonsByGeneration = async (
  * - If storage quota exceeded, cache is cleared
  */
 export const getPokemons = async (
-    offset: number,
-    limit: number = 20
+  offset: number,
+  limit: number = 20
 ): Promise<Pokemon[]> => {
+  const CACHE_KEY = 'pokedex_cache';
 
-    const CACHE_KEY = 'pokedex_cache';
+  // Retrieve cache from localStorage
+  const cachedData = localStorage.getItem(CACHE_KEY);
+  const fullCache = cachedData ? JSON.parse(cachedData) : {};
 
-    // Retrieve cache from localStorage
-    const cachedData = localStorage.getItem(CACHE_KEY);
-    let fullCache = cachedData ? JSON.parse(cachedData) : {};
+  /**
+   * Fetch paginated Pokémon references.
+   * This endpoint only returns name + URL.
+   */
+  const response = await fetch(
+    `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`
+  );
+  const data = await response.json();
 
-    /**
-     * Fetch paginated Pokémon references.
-     * This endpoint only returns name + URL.
-     */
-    const response = await fetch(
-        `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`
-    );
-    const data = await response.json();
+  /**
+   * Fetch detailed data for each Pokémon.
+   * Uses cache when available.
+   */
+  const pokemonDetails = await Promise.all(
+    data.results.map(async (pokeRef: { name: string; url: string }) => {
+      // Return cached version if available
+      if (fullCache[pokeRef.name]) {
+        return fullCache[pokeRef.name];
+      }
 
-    /**
-     * Fetch detailed data for each Pokémon.
-     * Uses cache when available.
-     */
-    const pokemonDetails = await Promise.all(
-        data.results.map(async (pokeRef: { name: string; url: string }) => {
+      // Otherwise fetch full detail
+      const res = await fetch(pokeRef.url);
+      const detailData = await res.json();
+      const simplified = simplifyPokemon(detailData);
 
-            // Return cached version if available
-            if (fullCache[pokeRef.name]) {
-                return fullCache[pokeRef.name];
-            }
+      // Store in cache
+      fullCache[pokeRef.name] = simplified;
 
-            // Otherwise fetch full detail
-            const res = await fetch(pokeRef.url);
-            const detailData = await res.json();
-            const simplified = simplifyPokemon(detailData);
+      return simplified;
+    })
+  );
 
-            // Store in cache
-            fullCache[pokeRef.name] = simplified;
+  /**
+   * Persist updated cache.
+   * If storage quota exceeded, clear cache to prevent failure.
+   */
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(fullCache));
+  } catch {
+    console.warn('Cache full. Clearing storage for reuse.');
+    localStorage.removeItem(CACHE_KEY);
+  }
 
-            return simplified;
-        })
-    );
-
-    /**
-     * Persist updated cache.
-     * If storage quota exceeded, clear cache to prevent failure.
-     */
-    try {
-        localStorage.setItem(CACHE_KEY, JSON.stringify(fullCache));
-    } catch (e) {
-        console.warn("Cache full. Clearing storage for reuse.");
-        localStorage.removeItem(CACHE_KEY);
-    }
-
-    return pokemonDetails;
+  return pokemonDetails;
 };
 
 /**
@@ -152,19 +164,18 @@ export const getPokemons = async (
  * - Returns null if not found or request fails
  */
 export const getPokemonByNameOrId = async (
-    query: string
+  query: string
 ): Promise<Pokemon | null> => {
-    try {
-        const res = await fetch(
-            `https://pokeapi.co/api/v2/pokemon/${query.toLowerCase()}`
-        );
+  try {
+    const res = await fetch(
+      `https://pokeapi.co/api/v2/pokemon/${query.toLowerCase()}`
+    );
 
-        if (!res.ok) return null;
+    if (!res.ok) return null;
 
-        const data = await res.json();
-        return simplifyPokemon(data);
-
-    } catch {
-        return null;
-    }
+    const data = await res.json();
+    return simplifyPokemon(data);
+  } catch {
+    return null;
+  }
 };
